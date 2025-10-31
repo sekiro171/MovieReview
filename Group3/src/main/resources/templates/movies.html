@@ -169,6 +169,12 @@
               Sửa
             </button>
           </td>
+
+          <td>
+            <button th:attr="data-id=${movie.id}" onclick="deleteMovie(this)">
+              Xoá
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -367,6 +373,32 @@
 
         // Mở form
         document.getElementById("overlay").style.display = "flex";
+      }
+
+      async function deleteMovie(btn) {
+        const id = btn.dataset.id; // lấy id từ thuộc tính data-id
+        const msg = document.getElementById("message");
+
+        if (!confirm("Bạn có chắc muốn xoá phim này không?")) return;
+
+        try {
+          const response = await fetch(`/movie/delete/${id}`, {
+            method: "DELETE",
+          });
+
+          if (response.ok) {
+            msg.style.color = "green";
+            msg.textContent = "Xoá phim thành công! Trang sẽ tải lại...";
+            setTimeout(() => window.location.reload(), 1000);
+          } else {
+            msg.style.color = "red";
+            msg.textContent = "Lỗi khi xoá phim!";
+          }
+        } catch (error) {
+          console.error("Lỗi kết nối tới server:", error);
+          msg.style.color = "red";
+          msg.textContent = "Không thể kết nối tới server!";
+        }
       }
     </script>
   </body>
