@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Danh sách phim</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+        background: #f4f4f4;
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        background: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background-color: #007bff;
+        color: white;
+      }
+      tr:hover {
+        background-color: #f5f5f5;
+      }
+      .no-data {
+        text-align: center;
+        color: #666;
+        font-style: italic;
+      }
+      a {
+        color: #007bff;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      /* ==================== MODAL (POPUP) ==================== */
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none; /* Ẩn mặc định */
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .modal {
+        background: white;
+        padding: 25px 35px;
+        border-radius: 10px;
+        width: 400px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .modal h2 {
+        margin-top: 0;
+        color: #007bff;
+      }
+
+      .modal input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+
+      .modal button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      .btn-primary {
+        background-color: #007bff;
+        color: white;
+      }
+
+      .btn-secondary {
+        background-color: #ccc;
+        color: black;
+        margin-left: 10px;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>DANH SÁCH PHIM</h1>
+
+    <div th:if="${movies == null or movies.isEmpty()}">
+      <p class="no-data">Chưa có phim nào trong cơ sở dữ liệu.</p>
+    </div>
+
+    <table th:if="${movies != null and !movies.isEmpty()}">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tên phim</th>
+          <th>Thể loại</th>
+          <th>Điểm đánh giá</th>
+          <th>Chi tiết</th>
+          <th>Sửa</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="movie : ${movies}">
+          <td th:text="${movie.id}"></td>
+          <td th:text="${movie.title}"></td>
+          <td th:text="${movie.genre}"></td>
+          <td
+            th:text="${movie.averageRating != null ? movie.averageRating : 'Chưa có đánh giá'}"
+          ></td>
+          <td>
+            <button
+              th:attr="data-id=${movie.id},
+           data-title=${movie.title},
+           data-genre=${movie.genre},
+           data-director=${movie.director},
+           data-year=${movie.releaseYear},
+           data-synopsis=${movie.synopsis},
+           data-cover=${movie.coverImageUrl}"
+              onclick="detailMovie(this)"
+            >
+              Chi tiết
+            </button>
+          </td>
+          <td>
+            <button
+              th:attr="data-id=${movie.id},
+              data-title=${movie.title},
+              data-genre=${movie.genre},
+              data-director=${movie.director},
+              data-year=${movie.releaseYear},
+              data-synopsis=${movie.synopsis},
+              data-cover=${movie.coverImageUrl}"
+              onclick="editMovieForm(this)"
+            >
+              Sửa
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="text-align: center; margin-top: 20px">
+      <button onclick="openModal()">Thêm phim mới</button>
+      <a href="/login" style="margin-left: 15px">Quay lại đăng nhập</a>
+    </div>
+
+    <!-- ==================== FORM POPUP ==================== -->
+    <div id="overlay" class="overlay" onclick="closeModal(event)">
+      <div class="modal" onclick="event.stopPropagation()">
+        <h2>Thêm phim mới</h2>
+        <input id="title" type="text" placeholder="Tên phim" />
+        <input id="genre" type="text" placeholder="Thể loại" />
+        <input id="director" type="text" placeholder="Đạo diễn" />
+        <input id="releaseYear" type="number" placeholder="Năm phát hành" />
+        <input id="synopsis" type="text" placeholder="Tóm tắt nội dung" />
+        <input id="coverImageUrl" type="text" placeholder="URL ảnh bìa" />
+        <div>
+          <button class="btn-primary" onclick="addMovie()">Lưu</button>
+          <button class="btn-secondary" onclick="closeModal()">Hủy</button>
+        </div>
+        <p id="message" style="margin-top: 10px; color: green"></p>
+      </div>
+    </div>
+
+    <script>
+      function openModal() {
+        document.getElementById("overlay").style.display = "flex";
+        document.getElementById("message").textContent = "";
+      }
+
+      function closeModal(event) {
+        if (event && event.target.id !== "overlay" && event.type === "click")
+          return;
+        document.getElementById("overlay").style.display = "none";
+      }
+
+      async function addMovie() {
+        const title = document.getElementById("title").value.trim();
+        const genre = document.getElementById("genre").value.trim();
+        const director = document.getElementById("director").value.trim();
+        const releaseYear = document.getElementById("releaseYear").value.trim();
+        const synopsis = document.getElementById("synopsis").value.trim();
+        const coverImageUrl = document
+          .getElementById("coverImageUrl")
+          .value.trim();
+
+        const msg = document.getElementById("message");
+
+        if (!title || !genre) {
+          msg.style.color = "red";
+          msg.textContent = "Vui lòng nhập đầy đủ thông tin!";
+          return;
+        }
+
+        try {
+          const response = await fetch("/movie/add", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+              title,
+              genre,
+              director,
+              releaseYear,
+              synopsis,
+              coverImageUrl,
+            }),
+          });
+
+          if (response.ok) {
+            msg.style.color = "green";
+            msg.textContent = "Thêm phim thành công! Trang sẽ tải lại...";
+            setTimeout(() => window.location.reload(), 1000);
+          } else {
+            msg.style.color = "red";
+            msg.textContent = "Lỗi khi thêm phim!";
+          }
+        } catch (error) {
+          msg.style.color = "red";
+          msg.textContent = "Không thể kết nối tới server!";
+        }
+      }
+
+      function detailMovie(btn) {
+        const ds = btn.dataset;
+        document.getElementById("title").value = ds.title || "";
+        document.getElementById("genre").value = ds.genre || "";
+        document.getElementById("director").value = ds.director || "";
+        document.getElementById("releaseYear").value = ds.year || "";
+        document.getElementById("synopsis").value = ds.synopsis || "";
+        document.getElementById("coverImageUrl").value = ds.cover || "";
+
+        document.querySelector(".modal h2").textContent = "Chi tiết phim";
+        document.querySelector(".btn-primary").style.display = "none";
+        document.getElementById("overlay").style.display = "flex";
+      }
+
+      function openModal() {
+        // Reset form
+        document.getElementById("title").value = "";
+        document.getElementById("genre").value = "";
+        document.getElementById("director").value = "";
+        document.getElementById("releaseYear").value = "";
+        document.getElementById("synopsis").value = "";
+        document.getElementById("coverImageUrl").value = "";
+        document.getElementById("message").textContent = "";
+
+        // Hiện nút “Lưu”
+        document.querySelector(".btn-primary").style.display = "inline-block";
+
+        // Cập nhật tiêu đề modal
+        document.querySelector(".modal h2").textContent = "Thêm phim mới";
+
+        // Mở modal
+        document.getElementById("overlay").style.display = "flex";
+      }
+
+      async function editMovie(id) {
+        const title = document.getElementById("title").value.trim();
+        const genre = document.getElementById("genre").value.trim();
+        const director = document.getElementById("director").value.trim();
+        const releaseYear = document.getElementById("releaseYear").value.trim();
+        const synopsis = document.getElementById("synopsis").value.trim();
+        const coverImageUrl = document
+          .getElementById("coverImageUrl")
+          .value.trim();
+
+        const msg = document.getElementById("message");
+
+        if (!title || !genre) {
+          msg.style.color = "red";
+          msg.textContent = "Vui lòng nhập đủ Tên phim và Thể loại!";
+          return;
+        }
+
+        try {
+          const response = await fetch(`/movie/edit/${id}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+              title,
+              genre,
+              director,
+              releaseYear,
+              synopsis,
+              coverImageUrl,
+            }),
+          });
+
+          if (response.ok) {
+            msg.style.color = "green";
+            msg.textContent =
+              "✅ Cập nhật phim thành công! Trang sẽ tải lại...";
+            alert("Cập nhật phim thành công!");
+            setTimeout(() => window.location.reload(), 1000);
+          } else {
+            msg.style.color = "red";
+            msg.textContent = "❌ Lỗi khi cập nhật phim!";
+          }
+        } catch (error) {
+          console.error("Lỗi kết nối tới server:", error);
+          msg.style.color = "red";
+          msg.textContent = "Không thể kết nối tới server!";
+        }
+      }
+
+      function editMovieForm(btn) {
+        const ds = btn.dataset;
+
+        // Gán dữ liệu phim vào form
+        document.getElementById("title").value = ds.title || "";
+        document.getElementById("genre").value = ds.genre || "";
+        document.getElementById("director").value = ds.director || "";
+        document.getElementById("releaseYear").value = ds.year || "";
+        document.getElementById("synopsis").value = ds.synopsis || "";
+        document.getElementById("coverImageUrl").value = ds.cover || "";
+
+        // Đổi tiêu đề form
+        document.querySelector(".modal h2").textContent = "Sửa thông tin phim";
+
+        // Hiện nút Lưu, đổi thành “Cập nhật”
+        const btnSave = document.querySelector(".btn-primary");
+        btnSave.style.display = "inline-block";
+        btnSave.textContent = "Cập nhật";
+
+        // Gán lại sự kiện click cho nút Lưu
+        btnSave.onclick = function () {
+          editMovie(ds.id); // Gọi hàm gửi request POST để cập nhật
+        };
+
+        // Mở form
+        document.getElementById("overlay").style.display = "flex";
+      }
+    </script>
+  </body>
+</html>
