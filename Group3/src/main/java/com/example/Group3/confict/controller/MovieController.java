@@ -1,5 +1,6 @@
 package com.example.Group3.confict.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.Group3.confict.model.Movie;
+import com.example.Group3.confict.model.Review;
 import com.example.Group3.confict.service.MovieService;
 
 @Controller
@@ -69,4 +71,21 @@ public class MovieController {
         }
     }
 
+    @GetMapping("movie/detail/{id}")
+    public String getMovieDetail(@PathVariable int id, Model model) {
+        Movie movie = movieService.findMovieById(id);
+
+        // Kiểm tra movie tồn tại
+        if (movie == null) {
+            return "redirect:/"; // Quay về trang chủ nếu không tìm thấy
+        }
+
+        model.addAttribute("movie", movie);
+
+        // Xử lý reviews (có thể null)
+        List<Review> reviews = movie.getReviews();
+        model.addAttribute("reviews", reviews != null ? reviews : new ArrayList<>());
+
+        return "movieDetail";
+    }
 }

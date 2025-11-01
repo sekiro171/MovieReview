@@ -1,8 +1,10 @@
 package com.example.Group3.confict.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,16 +25,19 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String title; // Tên phim
-    private String genre; // Thể loại
-    private String director; // Đạo diễn
-    private int releaseYear; // Năm phát hành
-    private String synopsis; // Tóm tắt nội dung
-    private String coverImageUrl; // Link ảnh bìa
+    private String title;
+    private String genre;
+    private String director;
+    private int releaseYear;
+    private String synopsis;
+    private String coverImageUrl;
     private double averageRating = 0.0;
 
-    public Movie(String title, String genre, String director, int releaseYear, String synopsis, String coverImageUrl,
-            double averageRating) {
+    @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER) // ⭐ Đổi thành EAGER
+    private List<Review> reviews = new ArrayList<>(); // ⭐ Khởi tạo mặc định
+
+    public Movie(String title, String genre, String director, int releaseYear,
+            String synopsis, String coverImageUrl, double averageRating) {
         this.title = title;
         this.genre = genre;
         this.director = director;
@@ -40,9 +45,6 @@ public class Movie {
         this.synopsis = synopsis;
         this.coverImageUrl = coverImageUrl;
         this.averageRating = averageRating;
+        this.reviews = new ArrayList<>(); // ⭐ Thêm dòng này
     }
-
-    @OneToMany(mappedBy = "movie")
-    private List<Review> reviews;
-
 }
