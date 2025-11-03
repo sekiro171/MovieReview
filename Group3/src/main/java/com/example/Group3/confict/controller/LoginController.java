@@ -11,12 +11,13 @@ import com.example.Group3.confict.model.Users;
 import com.example.Group3.confict.service.ReviewService;
 import com.example.Group3.confict.service.UserService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class LoginController {
 
-    private final ReviewService reviewService;
-
     private final UserService userService;
+    private final ReviewService reviewService;
 
     @Autowired
     public LoginController(UserService userService, ReviewService reviewService) {
@@ -30,12 +31,15 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String username, @RequestParam String password) {
+    public String login(@RequestParam String username, @RequestParam String password, HttpSession session) {
         Users user = userService.login(username, password);
-        if (userService.getRole(user).equals("Admin")) {
-            return "dashboard";
-        } else if (userService.getRole(user).equals("User")) {
-            return "welcome";
+        if (user != null) {
+            session.setAttribute("user", user);
+            if ("Admin".equals(userService.getRole(user))) {
+                return "dashboard";
+            } else {
+                return "redirect:/home";
+            }
         }
         return "error";
     }
@@ -48,15 +52,17 @@ public class LoginController {
     @PostMapping("/register")
     public String register(@RequestParam String username, @RequestParam String password, Model model) {
         if (userService.register(username, password)) {
-            String successMessage = "Registration successful. Please log in.";
-            model.addAttribute("successMessage", successMessage);
+            model.addAttribute("successMessage", "Registration successful. Please log in.");
             return "login";
         } else {
-            String errorMessage = "Registration failed. Please try again.";
-            model.addAttribute("errorMessage", errorMessage);
+            model.addAttribute("errorMessage", "Registration failed. Please try again.");
             return "register";
         }
-
     }
 
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
+    }
 }

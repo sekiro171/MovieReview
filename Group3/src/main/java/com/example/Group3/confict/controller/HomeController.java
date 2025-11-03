@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.example.Group3.confict.model.Movie;
 import com.example.Group3.confict.service.MovieService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class HomeController {
 
@@ -21,16 +23,18 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model, HttpSession session) {
         List<Movie> movies = movieService.findAllMovies();
         model.addAttribute("movies", movies);
+        model.addAttribute("user", session.getAttribute("user"));
         return "home";
     }
 
     @GetMapping("/home")
-    public String homepage(Model model) {
+    public String homepage(Model model, HttpSession session) {
         List<Movie> movies = movieService.findAllMovies();
         model.addAttribute("movies", movies);
+        model.addAttribute("user", session.getAttribute("user"));
         return "home";
     }
 }

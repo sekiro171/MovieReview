@@ -1,3 +1,4 @@
+
 package com.example.Group3.confict.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,4 +123,5 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Database already has " + movieRepository.count() + " movies. Skipping sample data initialization.");
         }
     }
+
 }
