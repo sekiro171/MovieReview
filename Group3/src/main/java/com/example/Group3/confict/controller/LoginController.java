@@ -35,7 +35,7 @@ public class LoginController {
         if (userService.getRole(user).equals("Admin")) {
             return "dashboard";
         } else if (userService.getRole(user).equals("User")) {
-            return "welcome";
+            return "redirect:/home";
         }
         return "error";
     }

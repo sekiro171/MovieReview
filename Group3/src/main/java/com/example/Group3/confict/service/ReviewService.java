@@ -1,6 +1,7 @@
 package com.example.Group3.confict.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,45 +12,23 @@ import com.example.Group3.confict.repository.ReviewRepository;
 
 @Service
 public class ReviewService {
-    private final ReviewRepository reviewRepository;
-
     @Autowired
-    public ReviewService(ReviewRepository reviewRepository) {
-        this.reviewRepository = reviewRepository;
+    private ReviewRepository reviewRepository;
+
+    public List<Review> findAll(){
+            return reviewRepository.findAll();  
     }
 
-    public boolean addReview(Movie movie) {
-        if (reviewRepository.existsById(movie.getId())) {
-            return false;
-        }
-        reviewRepository.save(movie);
-        return true;
+    public Optional<Review> findById(int id){
+        return reviewRepository.findById(id);
     }
 
-    public boolean deleteById(int id) {
-        if (reviewRepository.existsById(id)) {
-            reviewRepository.deleteById(id);
-            return true;
-        } else {
-            return false;
-
-        }
+    public void deleteById(int id){
+        reviewRepository.deleteById(id);
     }
 
-    public boolean updateReview(Movie movie) {
-        if (reviewRepository.existsById(movie.getId())) {
-            reviewRepository.save(movie);
-            return true;
-        } else {
-            return false;
-        }
+    public Review saveReview(Review review){
+        return reviewRepository.save(review);
     }
 
-    public Review findReviewById(int id) {
-        return reviewRepository.findById(id).orElse(null);
-    }
-
-    public List<Review> findAllReviews() {
-        return reviewRepository.findAll();
-    }
 }

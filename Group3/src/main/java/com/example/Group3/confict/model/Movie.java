@@ -33,8 +33,8 @@ public class Movie {
     private String coverImageUrl;
     private double averageRating = 0.0;
 
-    @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER) // ⭐ Đổi thành EAGER
-    private List<Review> reviews = new ArrayList<>(); // ⭐ Khởi tạo mặc định
+    @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER)
+    private List<Review> reviews = new ArrayList<>();
 
     public Movie(String title, String genre, String director, int releaseYear,
             String synopsis, String coverImageUrl, double averageRating) {
@@ -45,6 +45,6 @@ public class Movie {
         this.synopsis = synopsis;
         this.coverImageUrl = coverImageUrl;
         this.averageRating = averageRating;
-        this.reviews = new ArrayList<>(); // ⭐ Thêm dòng này
+        this.reviews = new ArrayList<>();
     }
 }

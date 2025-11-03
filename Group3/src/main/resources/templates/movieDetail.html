@@ -482,9 +482,7 @@
                 <div
                   class="user-avatar"
                   th:text="${review.user != null && review.user.userName != null ? review.user.userName.substring(0,1).toUpperCase() : 'U'}"
-                >
-                  U
-                </div>
+                ></div>
                 <span
                   class="username"
                   th:text="${review.user != null && review.user.userName != null ? review.user.userName : 'Anonymous'}"
