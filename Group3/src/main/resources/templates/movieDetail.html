@@ -5,306 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${movie.title} + ' - Chi tiết'">Chi tiết phim</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* Giữ style hiện tại, thêm style cho star rating và comment form */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background-color: #ffffff; color: #333; min-height: 100vh; }
+        a { text-decoration: none; color: inherit; }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #ffffff;
-            color: #333;
-            min-height: 100vh;
-        }
+        /* Header, hero, layout (giữ nguyên từ file hiện tại) */
+        .header { background-color: #000000; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 1.8rem; font-weight: bold; color: #ffffff; }
+        .nav-buttons { display: flex; gap: 1rem; align-items: center; }
+        .btn { padding: 0.6rem 1.5rem; border: 2px solid #000; border-radius: 4px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; font-weight: 500; }
+        .btn-login { background-color: #ffffff; color: #000000; }
+        .btn-register { background-color: #000000; color: #ffffff; border-color: #ffffff; }
+        .greeting { color: #ffffff; font-size: 1rem; margin-right: 1rem; }
+        .btn-logout { background-color: #ffffff; color: #000000; }
 
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
+        .hero { text-align: center; padding: 3rem 2rem; background-color: #f8f9fa; border-bottom: 1px solid #ddd; }
+        .hero h1 { font-size: 2.8rem; margin-bottom: 0.5rem; color: #000; font-weight: 700; }
+        .hero p { font-size: 1.2rem; color: #555; }
 
-        /* Header */
-        .header {
-            background-color: #000000;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #333;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        .container { max-width: 1100px; margin: 3rem auto; padding: 0 2rem; }
+        .movie-detail-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 2.5rem; align-items: start; }
+        @media (max-width: 768px) { .movie-detail-grid { grid-template-columns: 1fr; } }
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #ffffff;
-        }
+        .movie-poster { width: 100%; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.12); transition: transform 0.3s ease; }
+        .movie-poster:hover { transform: scale(1.02); }
+        .movie-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .poster-placeholder { width: 100%; height: 500px; background-color: #f0f0f0; display:flex; align-items:center; justify-content:center; font-size:5rem; color:#aaa; border-radius:12px; }
 
-        .nav-buttons {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 0.6rem 1.5rem;
-            border: 2px solid #000;
-            border-radius: 4px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .btn-login {
-            background-color: #ffffff;
-            color: #000000;
-        }
-
-        .btn-login:hover {
-            background-color: #f0f0f0;
-        }
-
-        .btn-register {
-            background-color: #000000;
-            color: #ffffff;
-            border-color: #ffffff;
-        }
-
-        .btn-register:hover {
-            background-color: #333333;
-        }
-
-        .greeting {
-            color: #ffffff;
-            font-size: 1rem;
-            margin-right: 1rem;
-        }
-
-        .btn-logout {
-            background-color: #ffffff;
-            color: #000000;
-        }
-
-        .btn-logout:hover {
-            background-color: #f0f0f0;
-        }
-
-        /* Hero Section */
-        .hero {
-            text-align: center;
-            padding: 3rem 2rem;
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .hero h1 {
-            font-size: 2.8rem;
-            margin-bottom: 0.5rem;
-            color: #000;
-            font-weight: 700;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            color: #555;
-        }
-
-        /* Main Content */
-        .container {
-            max-width: 1100px;
-            margin: 3rem auto;
-            padding: 0 2rem;
-        }
-
-        .movie-detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 2.5rem;
-            align-items: start;
-        }
-
-        @media (max-width: 768px) {
-            .movie-detail-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Poster */
-        .movie-poster {
-            width: 100%;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-            transition: transform 0.3s ease;
-        }
-
-        .movie-poster:hover {
-            transform: scale(1.02);
-        }
-
-        .movie-poster img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .poster-placeholder {
-            width: 100%;
-            height: 500px;
-            background-color: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5rem;
-            color: #aaa;
-            border-radius: 12px;
-        }
-
-        /* Info */
-        .movie-info {
-            padding: 1rem 0;
-        }
-
-        .movie-title {
-            font-size: 2.2rem;
-            font-weight: bold;
-            color: #000;
-            margin-bottom: 1rem;
-            line-height: 1.3;
-        }
-
-        .movie-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-bottom: 1.2rem;
-            font-size: 1.05rem;
-            color: #444;
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .meta-label {
-            font-weight: 600;
-            color: #000;
-        }
-
-        .rating-badge {
-            background-color: #ffd700;
-            color: #000;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 1rem;
-        }
-
-        .movie-synopsis {
-            font-size: 1.05rem;
-            line-height: 1.7;
-            color: #555;
-            margin-bottom: 2rem;
-            padding: 1rem;
-            background-color: #f9f9f9;
-            border-left: 4px solid #000;
-            border-radius: 0 8px 8px 0;
-        }
+        .movie-info { padding: 1rem 0; }
+        .movie-title { font-size: 2.2rem; font-weight: bold; color: #000; margin-bottom: 1rem; line-height:1.3; }
+        .movie-meta { display:flex; flex-wrap:wrap; gap:1.5rem; margin-bottom:1.2rem; font-size:1.05rem; color:#444; }
+        .meta-item { display:flex; align-items:center; gap:0.5rem; }
+        .meta-label { font-weight:600; color:#000; }
+        .rating-badge { background-color:#ffd700; color:#000; padding:0.4rem 0.8rem; border-radius:6px; font-weight:bold; font-size:1rem; }
+        .movie-synopsis { font-size:1.05rem; line-height:1.7; color:#555; margin-bottom:2rem; padding:1rem; background-color:#f9f9f9; border-left:4px solid #000; border-radius:0 8px 8px 0; }
 
         /* Reviews Section */
-        .reviews-section {
-            margin-top: 3rem;
-        }
+        .reviews-section { margin-top: 3rem; }
+        .section-title { font-size:1.9rem; font-weight:bold; color:#000; margin-bottom:1.5rem; text-align:center; position:relative; }
+        .section-title::after { content:''; display:block; width:60px; height:4px; background-color:#000; margin:0.8rem auto 0; border-radius:2px; }
 
-        .section-title {
-            font-size: 1.9rem;
-            font-weight: bold;
-            color: #000;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            position: relative;
-        }
+        .review-card { background:#ffffff; border:1px solid #eee; border-radius:10px; padding:1.3rem; margin-bottom:1.2rem; box-shadow:0 2px 8px rgba(0,0,0,0.05); transition: transform 0.2s ease; }
+        .review-card:hover { transform: translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+        .review-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; }
+        .review-user { font-weight:bold; color:#000; font-size:1.1rem; }
+        .review-rating { color:#ffa500; font-weight:bold; }
+        .review-comment { color:#444; line-height:1.6; font-size:1rem; margin-top:8px; white-space:pre-wrap; }
+        .no-reviews { text-align:center; padding:2.5rem; color:#777; font-style:italic; background-color:#f8f9fa; border-radius:10px; border:1px dashed #ddd; }
 
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 60px;
-            height: 4px;
-            background-color: #000;
-            margin: 0.8rem auto 0;
-            border-radius: 2px;
-        }
+        /* Star rating (based on old style, adapted) */
+        .rating-stars { display:flex; gap:6px; align-items:center; }
+        .star { font-size:2rem; cursor:pointer; transition: all 0.18s ease; color:#444; text-shadow:0 1px 3px rgba(0,0,0,0.3); user-select:none; }
+        .star.active { color:#ffd700; transform: scale(1.18); filter:drop-shadow(0 0 8px rgba(255,215,0,0.5)); }
+        .star.hover { color:#ffd700; transform: scale(1.12); }
 
-        .review-card {
-            background: #ffffff;
-            border: 1px solid #eee;
-            border-radius: 10px;
-            padding: 1.3rem;
-            margin-bottom: 1.2rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease;
-        }
+        .small-star { font-size:1.05rem; }
 
-        .review-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+        /* comment form */
+        .comment-form { background: #fff; border:1px solid #eee; padding:1rem; border-radius:8px; margin-bottom:1.5rem; box-shadow:0 2px 6px rgba(0,0,0,0.04); }
+        .comment-controls { display:flex; gap:12px; align-items:center; margin-top:12px; }
+        .comment-textarea { width:100%; min-height:100px; padding:10px; border-radius:6px; border:1px solid #ddd; resize:vertical; font-size:1rem; }
+        .btn-primary { background:#000; color:#fff; border:none; padding:0.6rem 1rem; border-radius:6px; cursor:pointer; }
+        .btn-ghost { background:transparent; color:#000; border:1px solid #ddd; padding:0.5rem 0.8rem; border-radius:6px; cursor:pointer; }
 
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.8rem;
-        }
+        .review-meta { color:#888; font-size:0.9rem; display:flex; gap:10px; align-items:center; }
 
-        .review-user {
-            font-weight: bold;
-            color: #000;
-            font-size: 1.1rem;
-        }
+        .review-actions { display:flex; gap:8px; align-items:center; }
+        .review-actions button { background:transparent; border:1px solid #ddd; padding:6px 8px; border-radius:6px; cursor:pointer; }
 
-        .review-rating {
-            color: #ffa500;
-            font-weight: bold;
-        }
+        .filters { display:flex; gap:12px; align-items:center; justify-content:center; margin-bottom:1rem; }
 
-        .review-comment {
-            color: #444;
-            line-height: 1.6;
-            font-size: 1rem;
-        }
+        .muted { color:#777; font-size:0.95rem; }
 
-        .no-reviews {
-            text-align: center;
-            padding: 2.5rem;
-            color: #777;
-            font-style: italic;
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            border: 1px dashed #ddd;
-        }
-
-        /* Footer */
-        .footer {
-            background-color: #000000;
-            color: #ffffff;
-            text-align: center;
-            padding: 2.5rem;
-            margin-top: 4rem;
-            border-top: 2px solid #333;
-        }
-
-        .footer p {
-            margin: 0.5rem 0;
-            color: #ccc;
-            font-size: 0.95rem;
-        }
     </style>
 </head>
 <body>
@@ -379,33 +152,442 @@
         <div class="reviews-section">
             <h2 class="section-title">Bình luận từ người xem</h2>
 
-            <div th:if="${reviews != null and !reviews.isEmpty()}">
-                <div th:each="review : ${reviews}" class="review-card">
-                    <div class="review-header">
-                        <div class="review-user" 
-                             th:text="${review.user != null ? review.user.userName : 'Người dùng ẩn danh'}">
-                            User
-                        </div>
-                        <div class="review-rating" th:text="'Rating ' + ${review.rating} + ' sao'">Rating 5 sao</div>
+            <!-- Info shown when user already has a review (initially hidden; JS will show if needed) -->
+            <div id="user-review-info" style="display:none; margin-bottom:12px;">
+                <div class="review-card" style="padding:12px; display:flex; align-items:center; justify-content:space-between;">
+                    <div style="font-size:0.98rem; color:#333;">
+                        Bạn đã gửi 1 bình luận cho phim này. Bạn có thể <strong>chỉnh sửa</strong> hoặc <strong>xóa</strong> nó.
                     </div>
-                    <p class="review-comment" 
-                       th:text="${review.comment != null ? review.comment : 'Không có nội dung bình luận'}">
-                        This is a great movie!
-                    </p>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <button id="open-edit" class="btn btn-ghost">Sửa bình luận</button>
+                        <!-- delete cũng có thể thao tác trực tiếp nếu muốn -->
+                        <button id="open-delete" class="btn btn-ghost" style="display:none;">Xóa (tùy chọn)</button>
+                    </div>
                 </div>
             </div>
 
-            <div th:if="${reviews == null or reviews.isEmpty()}" class="no-reviews">
+            <!-- Comment form -->
+            <div class="comment-form" id="comment-form"
+                th:attr="data-movie-id=${movie.id}, data-user-id=${user != null ? user.id : 0}, data-user-name=${user != null ? user.userName : ''}">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <div class="rating-stars" id="user-rating">
+                            <!-- 10 sao sẽ được render JS khi load -->
+                            <span class="muted">Đánh giá:</span>
+                        </div>
+                        <div class="muted" id="selected-rating-text">Chưa đánh giá</div>
+                    </div>
+
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <div class="muted">Tối đa 10 sao</div>
+                        <th:block th:if="${user == null}">
+                            <a href="/login" class="btn btn-ghost">Đăng nhập để bình luận</a>
+                        </th:block>
+                    </div>
+                </div>
+
+                <!-- textarea chỉ hiện khi user đã đăng nhập -->
+                <textarea id="comment-text" class="comment-textarea" placeholder="Viết nhận xét của bạn..." th:if="${user != null}"></textarea>
+
+                <div class="comment-controls">
+                    <button id="submit-review" class="btn-primary" th:if="${user != null}">Gửi đánh giá</button>
+                    <button id="cancel-edit" class="btn-ghost" style="display:none;">Hủy</button>
+                    <div class="muted" style="margin-left:auto;">Bạn: <strong th:text="${user != null ? user.userName : 'Khách'}"></strong></div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters" style="margin-top:16px;">
+                <label class="muted">Sắp xếp:</label>
+                <select id="sort-select">
+                    <option value="newest" selected>Mới nhất</option>
+                    <option value="oldest">Cũ nhất</option>
+                    <option value="top">Đánh giá cao</option>
+                    <option value="low">Đánh giá thấp</option>
+                </select>
+            </div>
+
+            <!-- reviews list -->
+            <div id="reviews-list" style="margin-top:12px;">
+                <!-- reviews sẽ được JS render vào đây (mặc định hiển thị 5 item, có nút Xem thêm) -->
+            </div>
+
+            <div id="no-reviews" class="no-reviews" style="display:none;">
                 Chưa có bình luận nào. Hãy là người đầu tiên chia sẻ cảm nhận!
             </div>
         </div>
+
     </div>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" style="background:#000; color:#fff; text-align:center; padding:2.5rem; margin-top:2rem;">
         <p>© 2024 Movie Hub. Tất cả quyền được bảo lưu.</p>
-        <p>Nền tảng xem phim trực tuyến hàng đầu</p>
     </footer>
+
+    <!-- Script xử lý rating + CRUD via API -->
+    <script>
+        const formEl = document.getElementById('comment-form');
+        const MOVIE_ID = parseInt(formEl.dataset.movieId || '0', 10);
+        const CURRENT_USER_ID = parseInt(formEl.dataset.userId || '0', 10);
+        const CURRENT_USER_NAME = formEl.dataset.userName || '';
+
+        console.log('MOVIE_ID=', MOVIE_ID, 'CURRENT_USER_ID=', CURRENT_USER_ID, 'CURRENT_USER_NAME=', CURRENT_USER_NAME);
+
+        const starsContainer = document.getElementById('user-rating');
+        let selectedRating = 0;
+        const MAX_STARS = 10;
+
+        function createStars(container, small=false) {
+            container.innerHTML = '';
+            for (let i = 1; i <= MAX_STARS; i++) {
+                const s = document.createElement('span');
+                s.classList.add('star');
+                if (small) s.classList.add('small-star');
+                s.dataset.rating = i;
+                s.textContent = '★';
+                container.appendChild(s);
+            }
+        }
+        createStars(starsContainer);
+
+        function updateStarClasses(container, rating) {
+            const items = container.querySelectorAll('.star');
+            items.forEach((star, idx) => {
+                star.classList.toggle('active', (idx < rating));
+            });
+        }
+
+        starsContainer.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('star')) return;
+            selectedRating = parseInt(e.target.dataset.rating);
+            updateStarClasses(starsContainer, selectedRating);
+            document.getElementById('selected-rating-text').textContent = selectedRating + ' sao';
+        });
+
+        starsContainer.addEventListener('mouseenter', (e) => {
+            if (!e.target.classList.contains('star')) return;
+            const hoverRating = parseInt(e.target.dataset.rating);
+            updateStarClasses(starsContainer, hoverRating);
+        }, true);
+
+        starsContainer.addEventListener('mouseleave', (e) => {
+            updateStarClasses(starsContainer, selectedRating);
+        });
+
+        // UI elements
+        const reviewsList = document.getElementById('reviews-list');
+        const noReviewsEl = document.getElementById('no-reviews');
+        const sortSelect = document.getElementById('sort-select');
+        const submitBtn = document.getElementById('submit-review');
+        const cancelBtn = document.getElementById('cancel-edit');
+        const commentTextarea = document.getElementById('comment-text');
+
+        // State
+        let currentEditId = null;       // id đang sửa
+        let hasUserReview = false;      // user đã có review cho movie này
+        let loadedReviews = [];         // cache reviews loaded
+        let showAll = false;            // show all comments toggle
+        const DEFAULT_SHOW_COUNT = 5;   // show first 5 by default
+
+        // Load reviews from server
+        async function loadReviews() {
+            const sort = sortSelect.value || 'newest';
+            try {
+                const res = await fetch(`/api/reviews/movie/${MOVIE_ID}?sort=${encodeURIComponent(sort)}`);
+                if (!res.ok) throw new Error('Không tải được reviews');
+                const data = await res.json();
+                loadedReviews = data || [];
+                // detect if current user has a review
+                hasUserReview = false;
+                if (CURRENT_USER_ID && CURRENT_USER_ID !== 0) {
+                    for (const r of loadedReviews) {
+                        if (r.userId === CURRENT_USER_ID) {
+                            hasUserReview = true;
+                            break;
+                        }
+                    }
+                }
+                updateFormVisibility();
+                renderReviews(loadedReviews);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Show/hide form behavior:
+        // - If user logged in and doesn't have review => show form
+        // - If user logged in and already has review => hide form (user edits via "Sửa")
+        // - If not logged in => show area with login link (HTML already handles textarea visibility using th:if)
+        function updateFormVisibility() {
+            if (!formEl) return;
+            // If user not logged in, keep the form area visible (but textarea missing due to th:if)
+            if (!CURRENT_USER_ID || CURRENT_USER_ID === 0) {
+                formEl.style.display = 'block';
+                submitBtn && (submitBtn.style.display = 'inline-block');
+                cancelBtn && (cancelBtn.style.display = 'none');
+                return;
+            }
+
+            // logged in
+            if (hasUserReview) {
+                // hide textarea and submit (user already has a review) — only show greeting/login area
+                // To be safe, hide entire input area (except for "Bạn: username" which is in markup)
+                // Keep the rating stars visible? requirement: hide form; show when user clicks "Sửa"
+                formEl.style.display = 'none';
+            } else {
+                // user logged in but no review => show form
+                formEl.style.display = 'block';
+                submitBtn && (submitBtn.style.display = 'inline-block');
+                cancelBtn && (cancelBtn.style.display = 'none');
+            }
+        }
+
+        // Render reviews, visual stars, limit to DEFAULT_SHOW_COUNT with "Xem thêm"
+        function renderReviews(items) {
+            reviewsList.innerHTML = '';
+            if (!items || items.length === 0) {
+                noReviewsEl.style.display = 'block';
+                return;
+            } else {
+                noReviewsEl.style.display = 'none';
+            }
+
+            // Determine list to display based on showAll and DEFAULT_SHOW_COUNT
+            const toDisplay = showAll ? items : items.slice(0, DEFAULT_SHOW_COUNT);
+
+            toDisplay.forEach(r => {
+                const card = document.createElement('div');
+                card.className = 'review-card';
+                const header = document.createElement('div');
+                header.className = 'review-header';
+
+                const userName = document.createElement('div');
+                userName.className = 'review-user';
+                userName.textContent = r.userName ? r.userName : 'Người dùng ẩn danh';
+
+                const right = document.createElement('div');
+                right.style.display = 'flex';
+                right.style.flexDirection = 'column';
+                right.style.alignItems = 'flex-end';
+
+                // rating: show visual stars (small)
+                const rating = document.createElement('div');
+                rating.className = 'review-rating';
+                let starHtml = '';
+                for (let i = 1; i <= 10; i++) {
+                    if (i <= (r.rating || 0)) {
+                        starHtml += '<span class="star small-star active">★</span>';
+                    } else {
+                        starHtml += '<span class="star small-star">★</span>';
+                    }
+                }
+                rating.innerHTML = starHtml;
+
+                const meta = document.createElement('div');
+                meta.className = 'review-meta';
+                meta.innerHTML = `<span>${formatDateTime(r.createdAt)}</span>`;
+
+                right.appendChild(rating);
+                right.appendChild(meta);
+
+                header.appendChild(userName);
+                header.appendChild(right);
+
+                const comment = document.createElement('p');
+                comment.className = 'review-comment';
+                comment.textContent = r.comment ? r.comment : '';
+
+                // actions (edit/delete) nếu đúng user
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'review-actions';
+                if (CURRENT_USER_ID && r.userId === CURRENT_USER_ID) {
+                    const btnEdit = document.createElement('button');
+                    btnEdit.textContent = 'Sửa';
+                    btnEdit.addEventListener('click', () => {
+                        // show the form and populate for editing
+                        // ensure form is visible for editing
+                        formEl.style.display = 'block';
+                        startEditReview(r);
+                    });
+
+                    const btnDel = document.createElement('button');
+                    btnDel.textContent = 'Xóa';
+                    btnDel.addEventListener('click', () => deleteReview(r.id));
+                    actionsDiv.appendChild(btnEdit);
+                    actionsDiv.appendChild(btnDel);
+                }
+
+                card.appendChild(header);
+                if (comment.textContent) card.appendChild(comment);
+                if (actionsDiv.children.length) card.appendChild(actionsDiv);
+                reviewsList.appendChild(card);
+            });
+
+            // if there are more than DEFAULT_SHOW_COUNT, add a "Xem thêm"/"Thu gọn" toggle
+            if (!showAll && items.length > DEFAULT_SHOW_COUNT) {
+                const moreBtn = document.createElement('button');
+                moreBtn.className = 'btn-ghost';
+                moreBtn.style.display = 'block';
+                moreBtn.style.margin = '12px auto';
+                moreBtn.textContent = `Xem thêm ${items.length - DEFAULT_SHOW_COUNT} bình luận`;
+                moreBtn.addEventListener('click', () => {
+                    showAll = true;
+                    renderReviews(items);
+                });
+                reviewsList.appendChild(moreBtn);
+            } else if (showAll && items.length > DEFAULT_SHOW_COUNT) {
+                const lessBtn = document.createElement('button');
+                lessBtn.className = 'btn-ghost';
+                lessBtn.style.display = 'block';
+                lessBtn.style.margin = '12px auto';
+                lessBtn.textContent = 'Thu gọn';
+                lessBtn.addEventListener('click', () => {
+                    showAll = false;
+                    renderReviews(items);
+                });
+                reviewsList.appendChild(lessBtn);
+            }
+        }
+
+        // Utility: format ISO datetime safely
+        function formatDateTime(isoStr) {
+            if (!isoStr) return '';
+            try {
+                const d = new Date(isoStr);
+                return d.toLocaleString();
+            } catch (e) {
+                return isoStr;
+            }
+        }
+
+        // Unified submit handler: create or update depending on currentEditId
+        submitBtn && submitBtn.addEventListener('click', async (ev) => {
+            if (!CURRENT_USER_ID || CURRENT_USER_ID === 0) {
+                alert('Vui lòng đăng nhập để bình luận.');
+                return;
+            }
+
+            const comment = commentTextarea.value.trim();
+
+            if (selectedRating === 0) {
+                if (!confirm('Bạn chưa chọn sao (0). Có muốn gửi không?')) return;
+            }
+
+            try {
+                if (!currentEditId) {
+                    // Create (server will upsert if user already has review)
+                    const params = new URLSearchParams();
+                    params.append('movieId', MOVIE_ID);
+                    params.append('userId', CURRENT_USER_ID);
+                    params.append('rating', selectedRating);
+                    params.append('comment', comment);
+
+                    const res = await fetch('/api/reviews', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: params.toString()
+                    });
+
+                    if (!res.ok) {
+                        const txt = await res.text();
+                        alert('Lỗi khi gửi: ' + txt);
+                        return;
+                    }
+
+                } else {
+                    // Update existing
+                    const params = new URLSearchParams();
+                    params.append('userId', CURRENT_USER_ID);
+                    params.append('rating', selectedRating);
+                    params.append('comment', comment);
+
+                    const res = await fetch(`/api/reviews/${currentEditId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: params.toString()
+                    });
+
+                    if (!res.ok) {
+                        const txt = await res.text();
+                        alert('Lỗi khi cập nhật: ' + txt);
+                        return;
+                    }
+                }
+
+                // reset view: hide form again because user now has a review
+                currentEditId = null;
+                commentTextarea.value = '';
+                selectedRating = 0;
+                updateStarClasses(starsContainer, 0);
+                document.getElementById('selected-rating-text').textContent = 'Chưa đánh giá';
+                submitBtn.textContent = 'Gửi đánh giá';
+                cancelBtn.style.display = 'none';
+
+                // reload reviews and hide form if user now has review
+                await loadReviews();
+
+            } catch (err) {
+                console.error(err);
+                alert('Lỗi mạng');
+            }
+        });
+
+        // Cancel edit handler
+        cancelBtn && cancelBtn.addEventListener('click', (e) => {
+            currentEditId = null;
+            commentTextarea.value = '';
+            selectedRating = 0;
+            updateStarClasses(starsContainer, 0);
+            document.getElementById('selected-rating-text').textContent = 'Chưa đánh giá';
+            submitBtn.textContent = 'Gửi đánh giá';
+            cancelBtn.style.display = 'none';
+            // if user already has review, hide the whole form
+            if (hasUserReview) {
+                formEl.style.display = 'none';
+            }
+        });
+
+        // startEditReview: only populate and show form (no extra listeners)
+        function startEditReview(review) {
+            currentEditId = review.id;
+            selectedRating = review.rating || 0;
+            updateStarClasses(starsContainer, selectedRating);
+            commentTextarea.value = review.comment ? review.comment : '';
+            document.getElementById('selected-rating-text').textContent = selectedRating + ' sao';
+            submitBtn.textContent = 'Lưu thay đổi';
+            cancelBtn.style.display = 'inline-block';
+        }
+
+        // Delete review
+        async function deleteReview(id) {
+            if (!confirm('Bạn có chắc muốn xóa bình luận này?')) return;
+            try {
+                const res = await fetch(`/api/reviews/${id}?userId=${CURRENT_USER_ID}`, {
+                    method: 'DELETE'
+                });
+                if (!res.ok) {
+                    const txt = await res.text();
+                    alert('Lỗi khi xóa: ' + txt);
+                    return;
+                }
+                // after delete, user no longer has review -> show form
+                await loadReviews();
+            } catch (err) {
+                console.error(err);
+                alert('Lỗi mạng');
+            }
+        }
+
+        // sort change
+        sortSelect && sortSelect.addEventListener('change', () => {
+            showAll = false; // reset showAll on sort change
+            loadReviews();
+        });
+
+        // initial load
+        loadReviews();
+
+        </script>
 
 </body>
 </html>
