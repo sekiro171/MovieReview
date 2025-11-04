@@ -24,7 +24,7 @@ public class Review {
     private String comment;
 
     @ManyToOne
-    @JoinColumn(name = "movieId")
+    @JoinColumn(name = "movieId"    )
     private Movie movie;
 
     @ManyToOne

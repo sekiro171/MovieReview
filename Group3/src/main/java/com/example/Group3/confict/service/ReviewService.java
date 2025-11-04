@@ -31,4 +31,12 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
+    public List<Review> findByMovieId(int movieId){
+        return reviewRepository.findByMovieId(movieId);
+    }
+
+    public List<Review> findByUserId(int userId){
+        return reviewRepository.findByUserId(userId);
+    }
+
 }
