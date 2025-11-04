@@ -5,6 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Hub - Trang chủ</title>
     <style>
+          /* Search Bar */
+        .search-bar {
+            margin: 2rem auto 1rem auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            max-width: 500px;
+        }
+        .search-input {
+            padding: 0.7rem 1rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 70%;
+        }
+        .search-btn {
+            padding: 0.7rem 1.5rem;
+            font-size: 1rem;
+            background-color: #000000;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .search-btn:hover {
+            background-color: #0056b3;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -262,6 +292,10 @@
     <section class="hero">
         <h1>Chào mừng đến với Movie Hub</h1>
         <p>Khám phá hàng ngàn bộ phim hay nhất mọi thời đại</p>
+        <form class="search-bar" th:action="@{/search}" method="get">
+            <input type="text" name="keyword" class="search-input" placeholder="Nhập tên phim cần tìm..." required>
+            <button type="submit" class="search-btn">Tìm kiếm</button>
+        </form>
     </section>
 
     <!-- Movies Section -->
