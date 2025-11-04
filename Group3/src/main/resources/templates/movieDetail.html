@@ -1,550 +1,411 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title th:text="${movie.title} + ' - Review'">Movie Review</title>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${movie.title} + ' - Chi tiết'">Chi tiết phim</title>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: #0f0f0f;
-        color: #e5e5e5;
-        line-height: 1.7;
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-      /* Header */
-      .header {
-        background: rgba(15, 15, 15, 0.98);
-        padding: 18px 50px;
-        position: fixed;
-        width: 100%;
-        top: 0;
-        z-index: 1000;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      }
-      .logo {
-        font-size: 1.9rem;
-        font-weight: 800;
-        color: #e50914;
-        text-decoration: none;
-        letter-spacing: 0.5px;
-      }
-      .btn-back {
-        padding: 11px 28px;
-        border: none;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.12);
-        color: #fff;
-        font-weight: 600;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.3s ease;
-      }
-      .btn-back:hover {
-        background: rgba(255, 255, 255, 0.22);
-        transform: translateY(-1px);
-      }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            min-height: 100vh;
+        }
 
-      /* Hero */
-      .hero-section {
-        margin-top: 80px;
-        height: 70vh;
-        position: relative;
-        overflow: hidden;
-      }
-      .hero-backdrop {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        position: absolute;
-        top: 0;
-        left: 0;
-        filter: brightness(0.55);
-      }
-      .hero-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-            to right,
-            rgba(15, 15, 15, 0.95) 25%,
-            rgba(15, 15, 15, 0.7) 55%,
-            transparent 100%
-          ),
-          linear-gradient(to top, #0f0f0f 0%, transparent 60%);
-      }
-      .hero-content {
-        position: absolute;
-        bottom: 90px;
-        left: 70px;
-        max-width: 650px;
-        z-index: 10;
-      }
-      .movie-title {
-        font-size: 4rem;
-        font-weight: 900;
-        margin-bottom: 18px;
-        text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.8);
-        line-height: 1.1;
-      }
-      .movie-meta {
-        display: flex;
-        gap: 22px;
-        margin-bottom: 25px;
-        font-size: 1.1rem;
-        flex-wrap: wrap;
-      }
-      .meta-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #aaa;
-        font-weight: 500;
-      }
-      .rating-badge {
-        background: #ffd700;
-        color: #000;
-        padding: 6px 16px;
-        border-radius: 8px;
-        font-weight: bold;
-        font-size: 1rem;
-      }
-      .genre-tag {
-        background: rgba(229, 9, 20, 0.2);
-        color: #e50914;
-        padding: 6px 16px;
-        border-radius: 30px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        border: 1px solid rgba(229, 9, 20, 0.3);
-      }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-      /* Content */
-      .content-section {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 60px 70px;
-      }
-      .movie-info-grid {
-        display: grid;
-        grid-template-columns: 1fr 2.2fr;
-        gap: 60px;
-        margin-bottom: 60px;
-      }
-      .poster-column {
-        position: sticky;
-        top: 130px;
-        height: fit-content;
-      }
-      .movie-poster {
-        width: 100%;
-        border-radius: 16px;
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-        transition: transform 0.3s ease;
-      }
-      .movie-poster:hover {
-        transform: scale(1.02);
-      }
-
-      .info-column {
-        padding-top: 10px;
-      }
-      .section-title {
-        font-size: 1.9rem;
-        margin-bottom: 25px;
-        color: #fff;
-        border-left: 5px solid #e50914;
-        padding-left: 18px;
-        font-weight: 700;
-      }
-      .info-item {
-        margin-bottom: 28px;
-      }
-      .info-label {
-        color: #888;
-        font-size: 0.9rem;
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 1.2px;
-        font-weight: 600;
-      }
-      .info-value {
-        font-size: 1.15rem;
-        color: #fff;
-        font-weight: 500;
-      }
-      .description {
-        font-size: 1.15rem;
-        line-height: 1.9;
-        color: #ccc;
-      }
-
-      /* Rating */
-      .rating-section {
-        background: rgba(255, 255, 255, 0.06);
-        padding: 35px;
-        border-radius: 16px;
-        margin: 35px 0;
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }
-      .current-rating {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 22px;
-      }
-      .rating-number {
-        font-size: 3.5rem;
-        font-weight: 900;
-        color: #ffd700;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      }
-      .rating-stars {
-        display: flex;
-        gap: 6px;
-      }
-      .star {
-        font-size: 2.2rem;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        color: #444;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-      }
-      .star:hover,
-      .star.active {
-        color: #ffd700;
-        transform: scale(1.25);
-        filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
-      }
-      .rating-text {
-        margin-top: 12px;
-        font-size: 1rem;
-        color: #aaa;
-        font-style: italic;
-      }
-
-      /* Comments */
-      .comments-section {
-        margin-top: 70px;
-      }
-      .comment-card {
-        background: rgba(255, 255, 255, 0.05);
-        padding: 28px;
-        border-radius: 14px;
-        margin-bottom: 22px;
-        border-left: 4px solid #e50914;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }
-      .comment-card:hover {
-        background: rgba(255, 255, 255, 0.08);
-        transform: translateY(-2px);
-      }
-      .comment-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-      }
-      .comment-user {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-      }
-      .user-avatar {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #e50914, #ff6b6b);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 1.3rem;
-        color: #fff;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      }
-      .username {
-        font-weight: 700;
-        font-size: 1.15rem;
-        color: #fff;
-      }
-      .comment-rating {
-        display: flex;
-        gap: 4px;
-      }
-      .comment-rating .star {
-        font-size: 1.1rem;
-        cursor: default;
-        color: #666;
-      }
-      .comment-rating .star.active {
-        color: #ffd700;
-      }
-      .comment-text {
-        color: #ddd;
-        line-height: 1.8;
-        font-size: 1.05rem;
-      }
-
-      .no-comments {
-        text-align: center;
-        padding: 50px;
-        color: #777;
-        font-size: 1.2rem;
-        font-style: italic;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 12px;
-        border: 1px dashed rgba(255, 255, 255, 0.1);
-      }
-
-      /* Responsive */
-      @media (max-width: 968px) {
+        /* Header */
         .header {
-          padding: 16px 20px;
+            background-color: #000000;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .movie-info-grid {
-          grid-template-columns: 1fr;
-          gap: 35px;
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffffff;
         }
-        .poster-column {
-          position: static;
-          max-width: 380px;
-          margin: 0 auto;
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
         }
-        .hero-content {
-          left: 30px;
-          right: 30px;
-          bottom: 70px;
-          max-width: 100%;
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border: 2px solid #000;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
+
+        .btn-login {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        .btn-login:hover {
+            background-color: #f0f0f0;
+        }
+
+        .btn-register {
+            background-color: #000000;
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        .btn-register:hover {
+            background-color: #333333;
+        }
+
+        .greeting {
+            color: #ffffff;
+            font-size: 1rem;
+            margin-right: 1rem;
+        }
+
+        .btn-logout {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        .btn-logout:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 3rem 2rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            color: #000;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1100px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .movie-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .movie-detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Poster */
+        .movie-poster {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            transition: transform 0.3s ease;
+        }
+
+        .movie-poster:hover {
+            transform: scale(1.02);
+        }
+
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .poster-placeholder {
+            width: 100%;
+            height: 500px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: #aaa;
+            border-radius: 12px;
+        }
+
+        /* Info */
+        .movie-info {
+            padding: 1rem 0;
+        }
+
         .movie-title {
-          font-size: 2.8rem;
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 1rem;
+            line-height: 1.3;
         }
-        .content-section {
-          padding: 40px 20px;
+
+        .movie-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+            color: #444;
         }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .meta-label {
+            font-weight: 600;
+            color: #000;
+        }
+
+        .rating-badge {
+            background-color: #ffd700;
+            color: #000;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .movie-synopsis {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-left: 4px solid #000;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Reviews Section */
+        .reviews-section {
+            margin-top: 3rem;
+        }
+
         .section-title {
-          font-size: 1.7rem;
+            font-size: 1.9rem;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
         }
-      }
-      @media (max-width: 480px) {
-        .movie-title {
-          font-size: 2.3rem;
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background-color: #000;
+            margin: 0.8rem auto 0;
+            border-radius: 2px;
         }
-        .hero-content {
-          left: 20px;
-          bottom: 60px;
+
+        .review-card {
+            background: #ffffff;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 1.3rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
         }
-        .rating-number {
-          font-size: 2.8rem;
+
+        .review-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        .star {
-          font-size: 1.9rem;
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
         }
-      }
+
+        .review-user {
+            font-weight: bold;
+            color: #000;
+            font-size: 1.1rem;
+        }
+
+        .review-rating {
+            color: #ffa500;
+            font-weight: bold;
+        }
+
+        .review-comment {
+            color: #444;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .no-reviews {
+            text-align: center;
+            padding: 2.5rem;
+            color: #777;
+            font-style: italic;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border: 1px dashed #ddd;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #000000;
+            color: #ffffff;
+            text-align: center;
+            padding: 2.5rem;
+            margin-top: 4rem;
+            border-top: 2px solid #333;
+        }
+
+        .footer p {
+            margin: 0.5rem 0;
+            color: #ccc;
+            font-size: 0.95rem;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
+
     <!-- Header -->
-    <div class="header">
-      <a href="/" class="logo">MOVIE DEMO</a>
-      <a href="/" class="btn-back">Quay lại</a>
-    </div>
+    <header class="header">
+        <a href="/" class="logo">MOVIE</a>
+        <nav class="nav-buttons">
+            <th:block th:if="${user == null}">
+                <a href="/login" class="btn btn-login">Đăng nhập</a>
+                <a href="/register" class="btn btn-register">Đăng ký</a>
+            </th:block>
+            <th:block th:if="${user != null}">
+                <span class="greeting">Xin chào, <span th:text="${user.userName}">User</span></span>
+                <a href="/logout" class="btn btn-logout">Đăng xuất</a>
+            </th:block>
+        </nav>
+    </header>
 
     <!-- Hero -->
-    <div class="hero-section">
-      <img
-        th:src="${movie.coverImageUrl}"
-        src=""
-        class="hero-backdrop"
-        alt="Backdrop"
-      />
-      <div class="hero-overlay"></div>
-      <div class="hero-content">
-        <h1 class="movie-title" th:text="${movie.title}">Movie Title</h1>
-        <div class="movie-meta">
-          <div class="meta-item">
-            <span th:text="${movie.releaseYear}">2024</span>
-          </div>
-          <div class="meta-item">
-            <span class="genre-tag" th:text="${movie.genre}">Hành Động</span>
-          </div>
-          <div class="meta-item">
-            <span
-              class="rating-badge"
-              th:text="${#numbers.formatDecimal(movie.averageRating,1,1)}"
-              >8.5</span
-            >
-          </div>
-        </div>
-      </div>
-    </div>
+    <section class="hero">
+        <h1 th:text="${movie.title}">Tên phim</h1>
+        <p>Khám phá thông tin chi tiết và đánh giá từ cộng đồng</p>
+    </section>
 
-    <!-- Content -->
-    <div class="content-section">
-      <div class="movie-info-grid">
-        <!-- Poster -->
-        <div class="poster-column">
-          <img
-            th:src="${movie.coverImageUrl}"
-            src=""
-            class="movie-poster"
-            alt="Poster"
-          />
-        </div>
+    <!-- Main Content -->
+    <div class="container">
+        <div class="movie-detail-grid">
 
-        <!-- Info -->
-        <div class="info-column">
-          <h2 class="section-title">Thông tin phim</h2>
-
-          <div class="info-item">
-            <div class="info-label">Đạo diễn</div>
-            <div class="info-value" th:text="${movie.director}">
-              Director Name
+            <!-- Poster -->
+            <div class="movie-poster">
+                <th:block th:if="${movie.coverImageUrl != null and movie.coverImageUrl != ''}">
+                    <img th:src="${movie.coverImageUrl}" th:alt="${movie.title}">
+                </th:block>
+                <th:block th:if="${movie.coverImageUrl == null or movie.coverImageUrl == ''}">
+                    <div class="poster-placeholder">Film</div>
+                </th:block>
             </div>
-          </div>
 
-          <div class="info-item">
-            <div class="info-label">Thể loại</div>
-            <div class="info-value" th:text="${movie.genre}">Genre</div>
-          </div>
+            <!-- Info -->
+            <div class="movie-info">
+                <h2 class="movie-title" th:text="${movie.title}">Tên phim</h2>
 
-          <div class="info-item">
-            <div class="info-label">Năm phát hành</div>
-            <div class="info-value" th:text="${movie.releaseYear}">2024</div>
-          </div>
-
-          <div class="info-item">
-            <div class="info-label">Tóm tắt</div>
-            <p
-              class="description"
-              th:if="${movie.synopsis != null && !movie.synopsis.isEmpty()}"
-              th:text="${movie.synopsis}"
-            >
-              Movie synopsis goes here.
-            </p>
-            <p
-              class="description"
-              th:if="${movie.synopsis == null || movie.synopsis.isEmpty()}"
-            >
-              Chưa có tóm tắt
-            </p>
-          </div>
-
-          <!-- Rating -->
-          <div class="rating-section">
-            <h3 class="section-title">Đánh giá phim</h3>
-            <div class="current-rating">
-              <span
-                class="rating-number"
-                th:text="${#numbers.formatDecimal(movie.averageRating,1,1)}"
-                >8.5</span
-              >
-              <div>
-                <div class="rating-stars" id="user-rating">
-                  <span class="star" data-rating="1">★</span>
-                  <span class="star" data-rating="2">★</span>
-                  <span class="star" data-rating="3">★</span>
-                  <span class="star" data-rating="4">★</span>
-                  <span class="star" data-rating="5">★</span>
+                <div class="movie-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Thể loại:</span>
+                        <span th:text="${movie.genre}">Drama</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Năm:</span>
+                        <span th:text="${movie.releaseYear}">1994</span>
+                    </div>
                 </div>
-                <div class="rating-text">Nhấn vào sao để đánh giá</div>
-              </div>
+
+                <div class="movie-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Đạo diễn:</span>
+                        <span th:text="${movie.director}">Frank Darabont</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="rating-badge">Rating <span th:text="${movie.averageRating}">9.3</span></span>
+                    </div>
+                </div>
+
+                <div class="movie-synopsis" th:text="${movie.synopsis}">
+                    Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.
+                </div>
             </div>
-          </div>
         </div>
-      </div>
 
-      <!-- Comments -->
-      <div class="comments-section">
-        <h2 class="section-title">Bình luận</h2>
+        <!-- Reviews -->
+        <div class="reviews-section">
+            <h2 class="section-title">Bình luận từ người xem</h2>
 
-        <div th:if="${reviews != null and !reviews.isEmpty()}">
-          <div class="comment-card" th:each="review : ${reviews}">
-            <div class="comment-header">
-              <div class="comment-user">
-                <div
-                  class="user-avatar"
-                  th:text="${review.user != null && review.user.userName != null ? review.user.userName.substring(0,1).toUpperCase() : 'U'}"
-                ></div>
-                <span
-                  class="username"
-                  th:text="${review.user != null && review.user.userName != null ? review.user.userName : 'Anonymous'}"
-                  >Username</span
-                >
-              </div>
-              <div class="comment-rating">
-                <span
-                  class="star active"
-                  th:each="i : ${#numbers.sequence(1, review.rating)}"
-                  >★</span
-                >
-                <span
-                  class="star"
-                  th:each="i : ${#numbers.sequence(review.rating + 1, 5)}"
-                  >★</span
-                >
-              </div>
+            <div th:if="${reviews != null and !reviews.isEmpty()}">
+                <div th:each="review : ${reviews}" class="review-card">
+                    <div class="review-header">
+                        <div class="review-user" 
+                             th:text="${review.user != null ? review.user.userName : 'Người dùng ẩn danh'}">
+                            User
+                        </div>
+                        <div class="review-rating" th:text="'Rating ' + ${review.rating} + ' sao'">Rating 5 sao</div>
+                    </div>
+                    <p class="review-comment" 
+                       th:text="${review.comment != null ? review.comment : 'Không có nội dung bình luận'}">
+                        This is a great movie!
+                    </p>
+                </div>
             </div>
-            <p
-              class="comment-text"
-              th:text="${review.comment != null ? review.comment : 'Không có bình luận'}"
-            >
-              This is a comment about the movie.
-            </p>
-          </div>
-        </div>
 
-        <div
-          th:if="${reviews == null or reviews.isEmpty()}"
-          class="no-comments"
-        >
-          Chưa có bình luận nào. Hãy là người đầu tiên chia sẻ cảm nhận!
+            <div th:if="${reviews == null or reviews.isEmpty()}" class="no-reviews">
+                Chưa có bình luận nào. Hãy là người đầu tiên chia sẻ cảm nhận!
+            </div>
         </div>
-      </div>
     </div>
 
-    <!-- Star rating script (giữ nguyên) -->
-    <script>
-      const stars = document.querySelectorAll("#user-rating .star");
-      let selectedRating = 0;
-      stars.forEach((star) => {
-        star.addEventListener("click", () => {
-          selectedRating = parseInt(star.dataset.rating);
-          updateStars(selectedRating);
-          console.log("User rated:", selectedRating);
-        });
-        star.addEventListener("mouseenter", () => {
-          const rating = parseInt(star.dataset.rating);
-          updateStars(rating);
-        });
-      });
-      document
-        .getElementById("user-rating")
-        .addEventListener("mouseleave", () => {
-          updateStars(selectedRating);
-        });
-      function updateStars(rating) {
-        stars.forEach((star, i) => {
-          star.classList.toggle("active", i < rating);
-        });
-      }
-    </script>
-  </body>
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2024 Movie Hub. Tất cả quyền được bảo lưu.</p>
+        <p>Nền tảng xem phim trực tuyến hàng đầu</p>
+    </footer>
+
+</body>
 </html>

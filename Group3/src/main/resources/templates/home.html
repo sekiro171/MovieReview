@@ -18,6 +18,11 @@
             min-height: 100vh;
         }
 
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
         /* Header */
         .header {
             background-color: #000000;
@@ -38,6 +43,7 @@
         .nav-buttons {
             display: flex;
             gap: 1rem;
+            align-items: center;
         }
 
         .btn {
@@ -70,6 +76,22 @@
 
         .btn-register:hover {
             background-color: #333333;
+        }
+
+        .greeting {
+            color: #ffffff;
+            font-size: 1rem;
+            margin-right: 1rem;
+        }
+
+        .btn-logout {
+            background-color: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+        }
+
+        .btn-logout:hover {
+            background-color: #f0f0f0;
         }
 
         /* Hero Section */
@@ -225,8 +247,14 @@
     <header class="header">
         <a href="/" class="logo">MOVIE</a>
         <nav class="nav-buttons">
-            <a href="/login" class="btn btn-login">Đăng nhập</a>
-            <a href="/register" class="btn btn-register">Đăng ký</a>
+            <th:block th:if="${user == null}">
+                <a href="/login" class="btn btn-login">Đăng nhập</a>
+                <a href="/register" class="btn btn-register">Đăng ký</a>
+            </th:block>
+            <th:block th:if="${user != null}">
+                <span class="greeting">Xin chào, <span th:text="${user.userName}"></span></span>
+                <a href="/logout" class="btn btn-logout">Đăng xuất</a>
+            </th:block>
         </nav>
     </header>
 
@@ -241,29 +269,31 @@
         <h2 class="section-title">Phim Đề Xuất</h2>
         
         <div th:if="${movies != null and !movies.isEmpty()}" class="movies-grid">
-            <div th:each="movie : ${movies}" class="movie-card">
-                <div class="movie-image">
-                    <img th:if="${movie.coverImageUrl != null and movie.coverImageUrl != ''}" 
-                         th:src="${movie.coverImageUrl}" 
-                         th:alt="${movie.title}">
-                    <span th:if="${movie.coverImageUrl == null or movie.coverImageUrl == ''}" 
-                          class="movie-image-placeholder">🎬</span>
-                </div>
-                <div class="movie-info">
-                    <h3 class="movie-title" th:text="${movie.title}">Tên phim</h3>
-                    <div class="movie-meta">
-                        <span class="movie-genre" th:text="${movie.genre}">Thể loại</span>
-                        <span class="movie-rating">⭐ <span th:text="${movie.averageRating}">0.0</span></span>
+            <a th:each="movie : ${movies}" th:href="@{/movie/detail/{id}(id=${movie.id})}">
+                <div class="movie-card">
+                    <div class="movie-image">
+                        <img th:if="${movie.coverImageUrl != null and movie.coverImageUrl != ''}" 
+                             th:src="${movie.coverImageUrl}" 
+                             th:alt="${movie.title}">
+                        <span th:if="${movie.coverImageUrl == null or movie.coverImageUrl == ''}" 
+                              class="movie-image-placeholder">🎬</span>
                     </div>
-                    <div class="movie-meta">
-                        <span th:text="${movie.releaseYear}">2024</span>
-                        <span th:text="${movie.director}">Đạo diễn</span>
+                    <div class="movie-info">
+                        <h3 class="movie-title" th:text="${movie.title}">Tên phim</h3>
+                        <div class="movie-meta">
+                            <span class="movie-genre" th:text="${movie.genre}">Thể loại</span>
+                            <span class="movie-rating">⭐ <span th:text="${movie.averageRating}">0.0</span></span>
+                        </div>
+                        <div class="movie-meta">
+                            <span th:text="${movie.releaseYear}">2024</span>
+                            <span th:text="${movie.director}">Đạo diễn</span>
+                        </div>
+                        <p class="movie-synopsis" th:text="${movie.synopsis}">
+                            Tóm tắt nội dung phim...
+                        </p>
                     </div>
-                    <p class="movie-synopsis" th:text="${movie.synopsis}">
-                        Tóm tắt nội dung phim...
-                    </p>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div th:if="${movies == null or movies.isEmpty()}" class="no-movies">
