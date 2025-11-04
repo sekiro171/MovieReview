@@ -37,4 +37,17 @@ public class HomeController {
         model.addAttribute("user", session.getAttribute("user"));
         return "home";
     }
+    @GetMapping("/search")
+    public String searchMovies(String keyword, Model model) {
+        List<Movie> movies;
+        if (keyword == null || keyword.trim().isEmpty()) {
+            movies = movieService.findAllMovies();
+        } else {
+            movies = movieService.searchMoviesByTitle(keyword);
+        }
+        model.addAttribute("movies", movies);
+        model.addAttribute("searchKeyword", keyword);
+        return "home";
+    }
+
 }

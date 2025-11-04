@@ -56,5 +56,12 @@ public class MovieService {
         return true;
 
     }
+    public List<Movie> searchMoviesByTitle(String keyword) {
+                if (keyword == null || keyword.trim().isEmpty()) {
+                    return movieRepository.findAll();
+                }
+                return movieRepository.findByTitleContainingIgnoreCase(keyword);
+            }
+
 
 }
